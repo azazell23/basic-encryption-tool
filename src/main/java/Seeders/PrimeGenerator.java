@@ -1,0 +1,19 @@
+package Seeders;
+
+import java.math.BigInteger;
+import java.security.SecureRandom;
+
+public class PrimeGenerator {
+    public static BigInteger generate(SecureRandom randomEngine)
+    {
+        BigInteger n;
+        do {
+            n = NumberGenerator.generate(
+                new BigInteger("43818473752343853453752954989757495739457934759759737590375070572935720750357995103710263912647120612047012640121241325233572395739252353234235235235723523"),
+                new BigInteger("4137415712795121724713847139473979235793759729358294791247917491749739479234739247923579442373957325792371295317839712974912479172571295793257592379235729357923759235792375923525324234125125175318749"),
+                randomEngine);
+        } while (!n.isProbablePrime(10));
+
+        return n;
+    }
+}
