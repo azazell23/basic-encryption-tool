@@ -2,6 +2,7 @@ package Cryptographers;
 
 import java.io.IOException;
 import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -19,7 +20,7 @@ public class RSA {
     private BigInteger n;
     private BigInteger d;
 
-    public void readPublicKeyString(String keyString)
+    public void readPublicKeyString(String keyString) throws Exception
     {
         try {
             byte[] packedKey = Base64.getDecoder().decode(keyString);
@@ -31,12 +32,11 @@ public class RSA {
             n = rsaKey.getModulus();
             e = rsaKey.getPublicExponent();
         } catch (Exception e) {
-            System.out.println("Error: " + e);
-            System.exit(0);
+            throw new Exception("Error: Failed to read public key.");
         }
     }
 
-    public void readPrivateKeyString(String keyString)
+    public void readPrivateKeyString(String keyString) throws Exception
     {
         try {
             byte[] packedKey = Base64.getDecoder().decode(keyString);
@@ -55,19 +55,14 @@ public class RSA {
         
             d = rsaKey.getPrivateExponent();
         } catch (Exception e) {
-            System.out.println("Error: " + e);
-            System.exit(0);
+            throw new Exception("Error: Failed to read private key.");
         }
     }
 
-    public void encrypt()
+    public void encrypt(Path filePath)
     {
-        // debugging purposes
-        Path filePath = Paths.get("").toAbsolutePath().normalize().resolve("database").resolve("files").resolve("test.txt");
-
         if (Files.exists(filePath))
         {
-            System.out.println("I was here");
             try {
                 byte[] fileBytes = Files.readAllBytes(filePath);
                 BigInteger m = new BigInteger(1, fileBytes);
@@ -82,13 +77,10 @@ public class RSA {
         }
     }
 
-    public void decrypt()
+    public void decrypt(Path filePath) throws Exception
     {
-        Path filePath = Paths.get("").toAbsolutePath().normalize().resolve("database").resolve("files").resolve("test.enc");
-
         if (Files.exists(filePath))
         {
-            System.out.println("I was here");
             try {
                 byte[] fileBytes = Files.readAllBytes(filePath);
                 BigInteger c = new BigInteger(1, fileBytes);
@@ -99,6 +91,35 @@ public class RSA {
                 System.out.println(e);
                 System.exit(0);
             }
+        }
+    }
+
+    public String encrypt(String string_) throws Exception
+    {
+        try {
+            byte[] textByte = string_.getBytes();
+            BigInteger m = new BigInteger(1, textByte);
+            BigInteger c = m.modPow(e, n);
+            byte[] byteArr = c.toByteArray();
+            return Base64.getEncoder().encodeToString(byteArr);
+        } catch (Exception e) {
+            throw e;
+        }
+    }
+
+    public String decrypt(String ciphertext_) throws Exception
+    {
+        try {
+            byte[] cipherByte = Base64.getDecoder().decode(ciphertext_);
+
+            BigInteger c = new BigInteger(1, cipherByte);
+            BigInteger m = c.modPow(d, n);
+
+            byte[] byteArr = m.toByteArray();
+
+            return new String(byteArr);
+        } catch (Exception e) {
+            throw e;
         }
     }
 }

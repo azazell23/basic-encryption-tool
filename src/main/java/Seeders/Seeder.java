@@ -54,7 +54,7 @@ public class Seeder {
         }
     }
 
-    public int Generate()
+    public void Generate()
     {
         SecureRandom rand = new SecureRandom();
         do {
@@ -70,6 +70,5 @@ public class Seeder {
         } while (!e.gcd(phi).equals(BigInteger.ONE));
 
         d = e.modInverse(phi);
-        return 1;
     }
 }
