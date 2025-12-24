@@ -39,25 +39,27 @@ public class StartingMenuInterface extends JFrame {
 	/**
 	 * Launch the application.
 	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					JFrame frame = new StartingMenuInterface();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
+//	public static void main(String[] args) {
+//		EventQueue.invokeLater(new Runnable() {
+//			public void run() {
+//				try {
+//					JFrame frame = new StartingMenuInterface();
+//					frame.setVisible(true);
+//				} catch (Exception e) {
+//					e.printStackTrace();
+//				}
+//			}
+//		});
+//	}
 
 	/**
 	 * Create the frame.
 	 */
-	public StartingMenuInterface() {
-		seeder = new Seeder();
-		rsa = new RSA();
+	public StartingMenuInterface(Seeder seeder, RSA rsa) {
+		// init
+		this.seeder = seeder;
+		this.rsa = rsa;
+		
 		setTitle("Java Project : Basic Cryptography Tool");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 800, 600);
@@ -67,13 +69,13 @@ public class StartingMenuInterface extends JFrame {
 		setContentPane(mainPanel);
 		
 		JPanel mainMenuInterface = showMainMenuInterface();
-		JPanel messagingAppInterface = new MessagingAppInterface(cl_mainPanel, mainPanel, seeder, rsa, this).getMainPanel();
+		JPanel announcementAppInterface = new AnnouncementAppInterface(cl_mainPanel, mainPanel, seeder, rsa, this).getMainPanel();
 		JPanel simpleRSAInterface = new RSAEncryptionInterface(cl_mainPanel, mainPanel, seeder, rsa, this).getMainPanel();
 		
 		mainPanel.add(mainMenuInterface, "mainMenuInterface"); // main panel
 		
 		
-		mainPanel.add(messagingAppInterface, "messagingAppInterface"); // messaging app panel
+		mainPanel.add(announcementAppInterface, "announcementAppInterface"); // messaging app panel
 		mainPanel.add(simpleRSAInterface, "simpleRSAInterface"); // simple rsa panel
 		
 		// JMenuBar
@@ -120,10 +122,10 @@ public class StartingMenuInterface extends JFrame {
 		mainMenuPanel.add(wrapper);
 		wrapper.setLayout(new BorderLayout(0, 0));
 		
-		JButton messagingAppBtn = new JButton("Simple Messaging App");
+		JButton announcementAppButton = new JButton("Simple Messaging App");
 		
-		wrapper.add(messagingAppBtn, BorderLayout.WEST);
-		messagingAppBtn.setPreferredSize(new Dimension(180, 40));
+		wrapper.add(announcementAppButton, BorderLayout.WEST);
+		announcementAppButton.setPreferredSize(new Dimension(180, 40));
 		
 		JButton simpleRSABtn = new JButton("Simple RSA Encryption");
 		wrapper.add(simpleRSABtn, BorderLayout.EAST);
@@ -144,9 +146,9 @@ public class StartingMenuInterface extends JFrame {
 		});
 		
 		// simple messaging app page redirect
-		messagingAppBtn.addActionListener(new ActionListener() {
+		announcementAppButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				cl_mainPanel.show(mainPanel, "messagingAppInterface");
+				cl_mainPanel.show(mainPanel, "announcementAppInterface");
 			}
 		});
 		return mainMenuPanel;

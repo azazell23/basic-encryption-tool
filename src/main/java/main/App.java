@@ -2,20 +2,21 @@ package main;
 
 import java.util.Scanner;
 
-import Application.User;
-import Authentication.Auth;
+import javax.swing.JFrame;
+
 import Cryptographers.RSA;
+import Model.User;
 import Seeders.Seeder;
 import UserInterface.StartingMenuInterface;
 
 public class App {
-    private static RSA rsa = new RSA();
-    private static Scanner scanner = new Scanner(System.in);
-    private static User user = null;
-    private static StartingMenuInterface menu;
+    private static RSA rsa;
+    private static Seeder seeder;
     public static void main(String[] Args) throws Exception
     {
-    		menu = new StartingMenuInterface();
-    		menu.setVisible(true);
+    		seeder = new Seeder();
+    		rsa = new RSA();
+    		JFrame frame = new StartingMenuInterface(seeder, rsa);
+    		frame.setVisible(true);
     }
 }

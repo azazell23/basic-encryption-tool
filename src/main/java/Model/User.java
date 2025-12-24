@@ -1,4 +1,4 @@
-package Application;
+package Model;
 
 public class User {
     private int id;
@@ -9,6 +9,10 @@ public class User {
         this.id = id;
         this.username = username;
         this.password = password;
+    }
+
+    public User() {
+        
     }
 
     public int getId() {

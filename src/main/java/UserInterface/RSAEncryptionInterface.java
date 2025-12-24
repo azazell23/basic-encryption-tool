@@ -32,8 +32,6 @@ import java.awt.Font;
 import javax.swing.JTextArea;
 
 public class RSAEncryptionInterface {
-	public RSAEncryptionInterface() {
-	}
 	private static final long serialVersionUID = 1L;
 	private CardLayout cl_simpleRSAPanel;
 	private JPanel simpleRSAPanel;
@@ -42,6 +40,7 @@ public class RSAEncryptionInterface {
 	private CardLayout cl_parentPanel;
 	private JPanel parentPanel;
 	private JFrame parentFrame;
+//	private JPanel testPanel; // testing purposes
 
 //	public static void main(String[] args) {
 //		EventQueue.invokeLater(new Runnable() {
@@ -70,9 +69,15 @@ public class RSAEncryptionInterface {
 	 * Create the main frame.
 	 */
 	public JPanel getMainPanel() {
-	
 		cl_simpleRSAPanel = new CardLayout();
 		simpleRSAPanel = new JPanel(cl_simpleRSAPanel);
+
+//		// testing purposes
+//		testPanel = new JPanel(new BorderLayout());
+//		testPanel.add(simpleRSAPanel, BorderLayout.CENTER);
+//		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//		setBounds(100, 100, 800, 600);
+//		setContentPane(testPanel);
 		
 		JPanel mainMenu = showMainMenuPanel();
 		JPanel encryptPage = showEncryptPanel();
@@ -203,8 +208,22 @@ public class RSAEncryptionInterface {
 		encryptPanel.setBorder(new EmptyBorder(10,10,10,10));
 		encryptPanel.setLayout(new BorderLayout(0, 0));
 		
+		JPanel panel_6 = new JPanel();
+		encryptPanel.add(panel_6, BorderLayout.CENTER);
+		panel_6.setLayout(new BorderLayout(0, 0));
+		
+		JPanel panel_5 = new JPanel();
+		panel_6.add(panel_5, BorderLayout.NORTH);
+		
+		JButton btnNewButton = new JButton("Return");
+		
+		btnNewButton.setPreferredSize(new Dimension(100, 40));
+		
+		panel_5.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
+		panel_5.add(btnNewButton);
+		
 		JPanel panel = new JPanel();
-		encryptPanel.add(panel, BorderLayout.CENTER);
+		panel_6.add(panel, BorderLayout.CENTER);
 		panel.setLayout(new GridLayout(4, 1, 0, 0));
 		
 		JPanel panel_1 = new JPanel();
@@ -249,26 +268,15 @@ public class RSAEncryptionInterface {
 		encryptBtn.setBounds(278, 32, 213, 60);
 		panel_3.add(encryptBtn);
 		
-		JPanel panel_5 = new JPanel();
-		encryptPanel.add(panel_5, BorderLayout.NORTH);
+		JPanel panel_7 = new JPanel();
+		encryptPanel.add(panel_7, BorderLayout.NORTH);
 		
-		JButton btnNewButton = new JButton("Return");
+		JPanel panel_8 = new JPanel();
+		panel_7.add(panel_8);
 		
-		btnNewButton.setPreferredSize(new Dimension(100, 40));
-		
-		panel_5.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
-		panel_5.add(btnNewButton);
-		
-		// action logics
-		// return btn logic
-		btnNewButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				publicKey.setText("");
-				messageText.setText("");
-				cipherText.setText("");
-				cl_simpleRSAPanel.show(simpleRSAPanel, "mainMenu");
-			}
-		});
+		JLabel lblNewLabel_2 = new JLabel("Encryption");
+		lblNewLabel_2.setFont(new Font("Tahoma", Font.BOLD, 20));
+		panel_8.add(lblNewLabel_2);
 		
 		// encrypt logics
 		encryptBtn.addActionListener(new ActionListener() {
@@ -284,17 +292,45 @@ public class RSAEncryptionInterface {
 			}
 		});
 		
+		// action logics
+		// return btn logic
+		btnNewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				publicKey.setText("");
+				messageText.setText("");
+				cipherText.setText("");
+				cl_simpleRSAPanel.show(simpleRSAPanel, "mainMenu");
+			}
+		});
+		
 		return encryptPanel;
 	}
 	
 	// decryption view
 	private JPanel showDecryptPanel() {
+		
+		// main panel
 		JPanel decryptPanel = new JPanel();
 		decryptPanel.setBorder(new EmptyBorder(10,10,10,10));
 		decryptPanel.setLayout(new BorderLayout(0, 0));
 		
+		JPanel panel_6 = new JPanel();
+		decryptPanel.add(panel_6, BorderLayout.CENTER);
+		panel_6.setLayout(new BorderLayout(0, 0));
+		
+		JPanel panel_5 = new JPanel();
+		panel_6.add(panel_5, BorderLayout.NORTH);
+		
+		JButton btnNewButton = new JButton("Return");
+		btnNewButton.setPreferredSize(new Dimension(100, 40));
+		
+		
+		panel_5.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
+		panel_5.add(btnNewButton);
+		
+		// body panel
 		JPanel panel = new JPanel();
-		decryptPanel.add(panel, BorderLayout.CENTER);
+		panel_6.add(panel, BorderLayout.CENTER);
 		panel.setLayout(new GridLayout(4, 1, 0, 0));
 		
 		JPanel panel_1 = new JPanel();
@@ -339,28 +375,12 @@ public class RSAEncryptionInterface {
 		decryptBtn.setBounds(278, 32, 213, 60);
 		panel_3.add(decryptBtn);
 		
-		JPanel panel_5 = new JPanel();
-		decryptPanel.add(panel_5, BorderLayout.NORTH);
+		JPanel panel_7 = new JPanel();
+		decryptPanel.add(panel_7, BorderLayout.NORTH);
 		
-		JButton btnNewButton = new JButton("Return");
-		btnNewButton.setPreferredSize(new Dimension(100, 40));
-		
-		
-		panel_5.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
-		panel_5.add(btnNewButton);
-		
-		// action logics
-		// return button handling event
-		btnNewButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				// returns all input to empty
-				privateKey.setText("");
-				cipherText.setText("");
-				originalMessage.setText("");
-						
-				cl_simpleRSAPanel.show(simpleRSAPanel, "mainMenu");
-			}
-		});
+		JLabel lblNewLabel_3 = new JLabel("Decryption");
+		lblNewLabel_3.setFont(new Font("Tahoma", Font.BOLD, 20));
+		panel_7.add(lblNewLabel_3);
 		
 		// decryption handling
 		decryptBtn.addActionListener(new ActionListener() {
@@ -373,6 +393,19 @@ public class RSAEncryptionInterface {
 				} catch (Exception decryptErr) {
 					JOptionPane.showMessageDialog(decryptPanel, "Fail to decrypt.\n" + decryptErr);
 				}
+			}
+		});
+		
+		// action logics
+		// return button handling event
+		btnNewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				// returns all input to empty
+				privateKey.setText("");
+				cipherText.setText("");
+				originalMessage.setText("");
+						
+				cl_simpleRSAPanel.show(simpleRSAPanel, "mainMenu");
 			}
 		});
 		
