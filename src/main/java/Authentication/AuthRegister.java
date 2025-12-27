@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
+import DAO.CryptoKeyDAO;
 import DAO.UserDAO;
 import Database.ConnectionDB;
 import Model.User;
@@ -20,8 +21,15 @@ public class AuthRegister {
 				throw new Exception("Username is taken.");
 			} else {
 				new UserDAO().insert(username, password);
-				return AuthLogin.attempt(username, password);
+				
+				User currentUser = AuthLogin.attempt(username, password);
+				
+				new CryptoKeyDAO().generateForUser(currentUser);
+				return currentUser;
 			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
 		}
 	}
 }

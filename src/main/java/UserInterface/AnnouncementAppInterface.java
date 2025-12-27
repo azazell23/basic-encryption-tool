@@ -9,9 +9,14 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.nio.file.Path;
 import java.sql.Connection;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Date;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -28,10 +33,13 @@ import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
 import Cryptographers.RSA;
+import DAO.AnnouncementDAO;
 import Database.ConnectionDB;
+import Model.Announcement;
 import Model.User;
 import Seeders.Seeder;
 import javax.swing.border.LineBorder;
+import javax.swing.table.DefaultTableModel;
 
 import com.toedter.calendar.JDateChooser;
 
@@ -63,6 +71,9 @@ public class AnnouncementAppInterface extends JFrame{
 	// data sections
 	private Connection db;
 	private User user;
+	ArrayList<Announcement> announcements;
+	// file purposes
+	Path filePath = null;
 
 	/**
 	 * Launch the application.
@@ -303,12 +314,16 @@ public class AnnouncementAppInterface extends JFrame{
 		
 		JButton btnNewButton = new JButton("Login");
 		btnNewButton.addActionListener(new ActionListener() {
+			
+			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				cl_announcementAppPanel.show(announcementAppPanel, "loginMenuPanel");
 			}
 		});
 		panel_10.add(btnNewButton);
 		btnNewButton_1.addActionListener(new ActionListener() {
+
+			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				try {
 					user = AuthRegister.attempt(username.getText(), new String(pass.getPassword()).trim(), new String(conf_pass.getPassword()));
@@ -483,6 +498,9 @@ public class AnnouncementAppInterface extends JFrame{
 		JButton checkInboxBtn = new JButton("Check Announcements");
 		checkInboxBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
+				// show announcements panel
+				JPanel announcementPanel = showAnnouncementsPanel();
+				announcementAppPanel.add(announcementPanel, "announcementPanel");
 				cl_announcementAppPanel.show(announcementAppPanel, "announcementPanel");
 			}
 		});
@@ -594,7 +612,7 @@ public class AnnouncementAppInterface extends JFrame{
 				int returnVal = fileChooser.showOpenDialog(fileChooser);
 				if (returnVal == JFileChooser.APPROVE_OPTION) {
 					File selectedFile = fileChooser.getSelectedFile();
-					Path filePath = selectedFile.toPath();
+					filePath = selectedFile.toPath();
 					
 					String fileName = filePath.getFileName().toString();
 					
@@ -610,6 +628,31 @@ public class AnnouncementAppInterface extends JFrame{
 		panel_2.add(panel_8);
 		
 		JButton btnNewButton_2 = new JButton("Send");
+		btnNewButton_2.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String subject = textField_1.getText();
+				String message = textArea.getText();
+				String filepathView = filePath.toString();
+				
+				if (subject.equals(null) && filepathView.equals(null)) {
+					JOptionPane.showMessageDialog(null, "Atleast one of the content must be filled.");
+				}
+				else if (!message.equals(null) && subject.equals(null)) {
+					JOptionPane.showMessageDialog(null, "Enter the subject of the message.");
+				}
+				else {
+					Timestamp sentAt = new Timestamp(new Date().getTime());
+					try {
+						new AnnouncementDAO().insert(new Announcement(user, subject, message, filePath, sentAt));
+						JOptionPane.showMessageDialog(null, "Announcement successfully published.");
+					} catch (Exception err) {
+						JOptionPane.showMessageDialog(null, "Error: " + err.getMessage());
+					}
+				}
+			}
+		});
 		panel_8.add(btnNewButton_2);
 		
 		return sendMessagePanel;				
@@ -623,6 +666,23 @@ public class AnnouncementAppInterface extends JFrame{
 		announcementPanel.add(panel);
 		panel.setLayout(new BorderLayout(0, 0));
 		
+		JPanel panel_2 = new JPanel();
+		panel.add(panel_2, BorderLayout.CENTER);
+		
+		String[] columns = {"No", "Author", "Title", "File", "Date"};
+		panel_2.setLayout(new BoxLayout(panel_2, BoxLayout.X_AXIS));
+		DefaultTableModel model = new DefaultTableModel(columns, 0) {
+			@Override
+			public boolean isCellEditable(int row, int column) {
+		        return false; // This makes ALL cells non-editable
+		    }
+		}; 
+		table = new JTable(model);
+		table.getColumnModel().getColumn(4).setPreferredWidth(150);
+		JScrollPane scrollPane = new JScrollPane(table);
+		
+		panel_2.add(scrollPane);
+		
 		JPanel panel_1 = new JPanel();
 		panel.add(panel_1, BorderLayout.WEST);
 		panel_1.setLayout(new BoxLayout(panel_1, BoxLayout.Y_AXIS));
@@ -635,6 +695,18 @@ public class AnnouncementAppInterface extends JFrame{
 		dateChooser.setPreferredSize(new Dimension(100, 20));
 		dateChooser.setDateFormatString("dd-MM-yyyy");
 		dateChooser.setDate(new java.util.Date());
+		updateTable(dateChooser.getDate());
+		
+		dateChooser.addPropertyChangeListener("date", new PropertyChangeListener() {
+		    @Override
+		    public void propertyChange(PropertyChangeEvent evt) {
+		        // This code runs whenever the date property changes
+		        if (evt.getNewValue() != null) {
+		        		updateTable(dateChooser.getDate());
+		        }
+		    }
+		});
+		
 		panel_9.add(dateChooser);
 		panel_1.add(panel_9);
 		
@@ -665,17 +737,6 @@ public class AnnouncementAppInterface extends JFrame{
 		JButton btnNewButton_3 = new JButton("Delete");
 		panel_8.add(btnNewButton_3);
 		
-		JPanel panel_2 = new JPanel();
-		panel.add(panel_2, BorderLayout.CENTER);
-		
-		String[] columns = {"Date", "Author", "Title", "Message", "File"};
-		Object[][] data = {};
-		panel_2.setLayout(new BoxLayout(panel_2, BoxLayout.X_AXIS));
-		table = new JTable(data, columns);
-		JScrollPane scrollPane = new JScrollPane(table);
-		
-		panel_2.add(scrollPane);
-		
 		JPanel panel_4 = new JPanel();
 		panel.add(panel_4, BorderLayout.NORTH);
 		panel_4.setLayout(new BoxLayout(panel_4, BoxLayout.Y_AXIS));
@@ -704,8 +765,29 @@ public class AnnouncementAppInterface extends JFrame{
 		JPanel sendMessagePanel = showSendMessagePanel();
 		announcementAppPanel.add(sendMessagePanel, "sendAnnouncementPanel");
 		
-		// show announcements panel
-		JPanel announcementPanel = showAnnouncementsPanel();
-		announcementAppPanel.add(announcementPanel, "announcementPanel");
 	}
+
+	public void updateTable(Date date) {
+		try {
+			DefaultTableModel model = (DefaultTableModel) table.getModel();
+			model.setRowCount(0);
+			announcements = new AnnouncementDAO().searchByDate(date);
+			int index = 1;
+			for (Announcement ann : announcements) {
+				Object[] data = {
+						index,
+						ann.getAuthor().getUsername(),
+						ann.getTitle(),
+						ann.getDecryptedFile().getFileName(),
+						ann.getSentAtStr()
+				};
+				
+				model.addRow(data);
+				index++;
+			}
+		} catch (Exception err) {
+			JOptionPane.showMessageDialog(null, "Error: Fail to update table." + err);
+		}
+	}
+
 }

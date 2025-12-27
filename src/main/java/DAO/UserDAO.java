@@ -66,6 +66,7 @@ public class UserDAO {
 			if (rs.next()) {
 				User user = new User();
 				user.setId(rs.getInt("user_id"));
+				user.setUsername(rs.getString("username"));
 				return user;
 			}
 			return null;

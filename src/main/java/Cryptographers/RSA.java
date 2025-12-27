@@ -1,5 +1,6 @@
 package Cryptographers;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
@@ -13,7 +14,10 @@ import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
+import java.util.Arrays;
 import java.util.Base64;
+
+import Model.DecryptedFile;
 
 public class RSA {
     private BigInteger e;
@@ -58,68 +62,151 @@ public class RSA {
             throw new Exception("Error: Failed to read private key.");
         }
     }
-
-    public void encrypt(Path filePath)
-    {
-        if (Files.exists(filePath))
-        {
-            try {
-                byte[] fileBytes = Files.readAllBytes(filePath);
-                BigInteger m = new BigInteger(1, fileBytes);
-                BigInteger c = m.modPow(e, n);
-                byte[] byteArr = c.toByteArray();
-                Files.write(filePath.getParent().toAbsolutePath().normalize().resolve("test.enc"), byteArr);
-            } catch (IOException e) {
-                System.out.println(e);
-                System.exit(0);
-            }
-            
-        }
+    
+    private int getMaxPlaintextBlockSize() {
+        return (n.bitLength() / 8) - 1;
     }
 
-    public void decrypt(Path filePath) throws Exception
-    {
-        if (Files.exists(filePath))
-        {
-            try {
-                byte[] fileBytes = Files.readAllBytes(filePath);
-                BigInteger c = new BigInteger(1, fileBytes);
-                BigInteger m = c.modPow(d, n);
-                byte[] byteArr = m.toByteArray();
-                Files.write(filePath.getParent().toAbsolutePath().normalize().resolve("testDecrpted.txt"), byteArr);
-            } catch (IOException e) {
-                System.out.println(e);
-                System.exit(0);
-            }
+    public Path encrypt(Path filePath) throws Exception {
+        if (!Files.exists(filePath)) {
+            throw new Exception("Error: Couldn't read file.");
         }
-    }
 
-    public String encrypt(String string_) throws Exception
-    {
-        try {
-            byte[] textByte = string_.getBytes();
-            BigInteger m = new BigInteger(1, textByte);
+        byte[] fileBytes = Files.readAllBytes(filePath);
+        int blockSize = getMaxPlaintextBlockSize();
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+        // --- encrypt in chunks ---
+        for (int i = 0; i < fileBytes.length; i += blockSize) {
+            int len = Math.min(blockSize, fileBytes.length - i);
+            byte[] block = Arrays.copyOfRange(fileBytes, i, i + len);
+
+            BigInteger m = new BigInteger(1, block);
             BigInteger c = m.modPow(e, n);
-            byte[] byteArr = c.toByteArray();
-            return Base64.getEncoder().encodeToString(byteArr);
-        } catch (Exception e) {
-            throw e;
+
+            byte[] encBlock = c.toByteArray();
+
+            // store encrypted block length (2 bytes)
+            out.write((encBlock.length >>> 8) & 0xFF);
+            out.write(encBlock.length & 0xFF);
+
+            // store encrypted block
+            out.write(encBlock);
         }
+
+        // --- output file ---
+        String originalName = filePath.getFileName().toString();
+
+        Path targetDir = Paths.get("enc").toAbsolutePath();
+        Files.createDirectories(targetDir);
+
+        Path output = targetDir.resolve(originalName + ".enc");
+        Files.write(output, out.toByteArray());
+
+        return output;
     }
 
-    public String decrypt(String ciphertext_) throws Exception
-    {
-        try {
-            byte[] cipherByte = Base64.getDecoder().decode(ciphertext_);
 
-            BigInteger c = new BigInteger(1, cipherByte);
+    public DecryptedFile decrypt(Path filePath) throws Exception {
+        if (!Files.exists(filePath)) {
+            throw new Exception("Error: Couldn't read file.");
+        }
+
+        byte[] encrypted = Files.readAllBytes(filePath);
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+        int i = 0;
+
+        // --- decrypt in chunks ---
+        while (i < encrypted.length) {
+            int len = ((encrypted[i] & 0xFF) << 8) | (encrypted[i + 1] & 0xFF);
+            i += 2;
+
+            byte[] encBlock = Arrays.copyOfRange(encrypted, i, i + len);
+            i += len;
+
+            BigInteger c = new BigInteger(1, encBlock);
             BigInteger m = c.modPow(d, n);
 
-            byte[] byteArr = m.toByteArray();
+            byte[] block = m.toByteArray();
 
-            return new String(byteArr);
-        } catch (Exception e) {
-            throw e;
+            // remove sign byte if present
+            if (block.length > 1 && block[0] == 0) {
+                block = Arrays.copyOfRange(block, 1, block.length);
+            }
+
+            out.write(block);
         }
+
+        // --- restore original filename ---
+        String name = filePath.getFileName().toString();
+        String originalName = name.replaceFirst("\\.enc$", "");
+
+//        Path targetDir = filePath.getParent().getParent().resolve("dec");
+//        if (targetDir == null) {
+//            targetDir = Paths.get(".");
+//        }
+//
+//        Path output = targetDir.resolve(originalName);
+//        Files.write(output, out.toByteArray());
+
+        return new DecryptedFile(originalName, out.toByteArray());
     }
+
+
+    public String encrypt(String string_) throws Exception {
+        byte[] data = string_.getBytes(StandardCharsets.UTF_8);
+        int blockSize = getMaxPlaintextBlockSize();
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+        for (int i = 0; i < data.length; i += blockSize) {
+            int len = Math.min(blockSize, data.length - i);
+            byte[] block = Arrays.copyOfRange(data, i, i + len);
+
+            BigInteger m = new BigInteger(1, block);
+            BigInteger c = m.modPow(e, n);
+
+            byte[] encBlock = c.toByteArray();
+
+            // store encrypted block length (2 bytes)
+            out.write((encBlock.length >>> 8) & 0xFF);
+            out.write(encBlock.length & 0xFF);
+
+            // store encrypted block
+            out.write(encBlock);
+        }
+
+        return Base64.getEncoder().encodeToString(out.toByteArray());
+    }
+
+    public String decrypt(String ciphertext_) throws Exception {
+        byte[] encrypted = Base64.getDecoder().decode(ciphertext_);
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+        int i = 0;
+        while (i < encrypted.length) {
+            int len = ((encrypted[i] & 0xFF) << 8) | (encrypted[i + 1] & 0xFF);
+            i += 2;
+
+            byte[] encBlock = Arrays.copyOfRange(encrypted, i, i + len);
+            i += len;
+
+            BigInteger c = new BigInteger(1, encBlock);
+            BigInteger m = c.modPow(d, n);
+
+            byte[] block = m.toByteArray();
+
+            // remove sign byte if present
+            if (block.length > 1 && block[0] == 0) {
+                block = Arrays.copyOfRange(block, 1, block.length);
+            }
+
+            out.write(block);
+        }
+
+        return new String(out.toByteArray(), StandardCharsets.UTF_8);
+    }
+
 }
