@@ -1,10 +1,7 @@
 package Model;
 
-import java.io.File;
 import java.nio.file.Path;
-import java.sql.Time;
 import java.sql.Timestamp;
-import java.util.Date;
 
 public class Announcement {
     private int id;

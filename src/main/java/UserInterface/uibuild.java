@@ -30,12 +30,6 @@ public class uibuild extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
-	private JTextField username;
-	private JTextField password;
-	private JTextField conf_password;
-	private JTextField textField;
-	private JTextField textField_1;
-	private JTable table;
 
 	/**
 	 * Launch the application.
@@ -63,79 +57,55 @@ public class uibuild extends JFrame {
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		
+		JPanel msgPanel = new JPanel();
+		contentPane.add(msgPanel);
+		msgPanel.setLayout(new BoxLayout(msgPanel, BoxLayout.Y_AXIS));
+		
 		JPanel panel = new JPanel();
-		contentPane.add(panel);
+		panel.setBackground(new Color(255, 255, 255));
+		msgPanel.add(panel);
 		panel.setLayout(new BorderLayout(0, 0));
 		
-		JPanel panel_1 = new JPanel();
-		panel.add(panel_1, BorderLayout.WEST);
-		panel_1.setLayout(new BoxLayout(panel_1, BoxLayout.Y_AXIS));
+		JLabel authorLabel = new JLabel("Author");
+		authorLabel.setFont(new Font("Tahoma", Font.PLAIN, 12));
+		panel.add(authorLabel, BorderLayout.WEST);
 		
-		JPanel panel_9 = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		JLabel lblNewLabel_2 = new JLabel("datetime");
+		panel.add(lblNewLabel_2, BorderLayout.EAST);
 		
-		JLabel lblNewLabel_4 = new JLabel("Date");
-		panel_9.add(lblNewLabel_4);
-		JDateChooser dateChooser = new JDateChooser();
-		dateChooser.setPreferredSize(new Dimension(100, 20));
-		dateChooser.setDateFormatString("dd-MM-yyyy");
-		dateChooser.setDate(new java.util.Date());
-		panel_9.add(dateChooser);
-		panel_1.add(panel_9);
+		JPanel panel_1 = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		panel_1.setBackground(new Color(255, 255, 255));
+		msgPanel.add(panel_1);
+		
+		JLabel titleLabel = new JLabel("Title");
+		titleLabel.setFont(new Font("Tahoma", Font.BOLD, 14));
+		panel_1.add(titleLabel);
+		
+		JPanel panel_2 = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		panel_2.setBackground(new Color(255, 255, 255));
+		msgPanel.add(panel_2);
+		
+		JLabel fileLabel = new JLabel("File");
+		panel_2.add(fileLabel);
 		
 		JPanel panel_3 = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		panel_1.add(panel_3);
+		panel_3.setBackground(new Color(255, 255, 255));
+		panel_3.setPreferredSize(new Dimension(300, 100));
+		msgPanel.add(panel_3);
 		
-		JLabel lblNewLabel = new JLabel("View Announcement");
-		panel_3.add(lblNewLabel);
-		
-		JButton btnNewButton_1 = new JButton("View");
-		panel_3.add(btnNewButton_1);
-		
-		JPanel panel_7 = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		panel_1.add(panel_7);
-		
-		JLabel lblNewLabel_2 = new JLabel("Download File");
-		panel_7.add(lblNewLabel_2);
-		
-		JButton btnNewButton_2 = new JButton("Download");
-		panel_7.add(btnNewButton_2);
-		
-		JPanel panel_8 = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		panel_1.add(panel_8);
-		
-		JLabel lblNewLabel_3 = new JLabel("Delete Announcement");
-		panel_8.add(lblNewLabel_3);
-		
-		JButton btnNewButton_3 = new JButton("Delete");
-		panel_8.add(btnNewButton_3);
-		
-		JPanel panel_2 = new JPanel();
-		panel.add(panel_2, BorderLayout.CENTER);
-		
-		String[] columns = {"Date", "Author", "Title", "Message", "File"};
-		Object[][] data = {};
-		panel_2.setLayout(new BoxLayout(panel_2, BoxLayout.X_AXIS));
-		table = new JTable(data, columns);
-		JScrollPane scrollPane = new JScrollPane(table);
-		
-		panel_2.add(scrollPane);
+		JLabel messageLbl = new JLabel("Lorem Ipsum");
+		panel_3.add(messageLbl);
 		
 		JPanel panel_4 = new JPanel();
-		panel.add(panel_4, BorderLayout.NORTH);
-		panel_4.setLayout(new BoxLayout(panel_4, BoxLayout.Y_AXIS));
+		panel_4.setBackground(new Color(255, 255, 255));
+		msgPanel.add(panel_4);
+		panel_4.setLayout(new BorderLayout(0, 0));
 		
-		JPanel panel_5 = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		panel_4.add(panel_5);
+		JButton btnNewButton = new JButton("Close");
+		panel_4.add(btnNewButton, BorderLayout.EAST);
 		
-		JButton btnNewButton = new JButton("Return");
-		panel_5.add(btnNewButton);
-		
-		JPanel panel_6 = new JPanel();
-		panel_4.add(panel_6);
-		
-		JLabel lblNewLabel_1 = new JLabel("Announcements");
-		panel_6.add(lblNewLabel_1);
-		
+		JButton btnNewButton_1 = new JButton("Download File");
+		panel_4.add(btnNewButton_1, BorderLayout.WEST);
 	}
 
 }

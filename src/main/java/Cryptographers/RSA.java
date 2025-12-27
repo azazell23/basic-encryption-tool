@@ -1,7 +1,6 @@
 package Cryptographers;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -99,7 +98,6 @@ public class RSA {
         String originalName = filePath.getFileName().toString();
 
         Path targetDir = Paths.get("enc").toAbsolutePath();
-        Files.createDirectories(targetDir);
 
         Path output = targetDir.resolve(originalName + ".enc");
         Files.write(output, out.toByteArray());
@@ -142,14 +140,6 @@ public class RSA {
         // --- restore original filename ---
         String name = filePath.getFileName().toString();
         String originalName = name.replaceFirst("\\.enc$", "");
-
-//        Path targetDir = filePath.getParent().getParent().resolve("dec");
-//        if (targetDir == null) {
-//            targetDir = Paths.get(".");
-//        }
-//
-//        Path output = targetDir.resolve(originalName);
-//        Files.write(output, out.toByteArray());
 
         return new DecryptedFile(originalName, out.toByteArray());
     }

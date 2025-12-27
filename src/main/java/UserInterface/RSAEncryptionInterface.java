@@ -1,7 +1,5 @@
 package UserInterface;
 
-import java.awt.EventQueue;
-
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
@@ -32,14 +30,12 @@ import java.awt.Font;
 import javax.swing.JTextArea;
 
 public class RSAEncryptionInterface {
-	private static final long serialVersionUID = 1L;
 	private CardLayout cl_simpleRSAPanel;
 	private JPanel simpleRSAPanel;
-	private static RSA rsa;
-	private static Seeder seeder;
 	private CardLayout cl_parentPanel;
 	private JPanel parentPanel;
 	private JFrame parentFrame;
+	private Seeder seeder;
 //	private JPanel testPanel; // testing purposes
 
 //	public static void main(String[] args) {
@@ -55,14 +51,48 @@ public class RSAEncryptionInterface {
 //		});
 //	}
 
-	public RSAEncryptionInterface(CardLayout cl_parentPanel, JPanel parentPanel, Seeder seeder, RSA rsa,
-			JFrame frame) {
+	public RSAEncryptionInterface(CardLayout cl_parentPanel, JPanel parentPanel, JFrame frame) {
 		this.cl_parentPanel = cl_parentPanel;
 		this.parentPanel = parentPanel;
-		this.seeder = seeder;
-		this.rsa = rsa;
 		this.parentFrame = frame;
 		
+	}
+	
+	public void addMenuBar() {
+		// JMenuBar
+				JMenuBar menuBar = new JMenuBar();
+				
+				JMenu mnNewMenu = new JMenu("RSA Keys");
+				menuBar.add(mnNewMenu);
+				
+				JMenuItem copyPublicKeyBtn = new JMenuItem("Copy - Public Key");
+				copyPublicKeyBtn.addActionListener(new ActionListener() {
+					
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						// this functions to copy the public key string to
+						StringSelection stringSelection = new StringSelection(seeder.getPublicKeyString());
+						Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+						clipboard.setContents(stringSelection, null);
+						JOptionPane.showMessageDialog(null, "Public Key added to Clipboard.");
+					}
+				});
+				mnNewMenu.add(copyPublicKeyBtn);
+				
+				JMenuItem copyPrivateKeyBtn = new JMenuItem("Copy - Private Key");
+				copyPrivateKeyBtn.addActionListener(new ActionListener() {
+					
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						// this functions to copy the private key string to clipboard
+						StringSelection stringSelection = new StringSelection(seeder.getPrivateKeyString());
+						Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+						clipboard.setContents(stringSelection, null);
+						JOptionPane.showMessageDialog(null, "Private Key added to Clipboard.");
+					}
+				});
+				mnNewMenu.add(copyPrivateKeyBtn);
+				parentFrame.setJMenuBar(menuBar);
 	}
 	
 	/**
@@ -86,6 +116,8 @@ public class RSAEncryptionInterface {
 		simpleRSAPanel.add(mainMenu, "mainMenu");
 		simpleRSAPanel.add(encryptPage, "encryptMenu");
 		simpleRSAPanel.add(decryptPage, "decryptMenu");
+		
+		addMenuBar();
 		
 		return simpleRSAPanel;
 	}
@@ -165,6 +197,7 @@ public class RSAEncryptionInterface {
 		returnBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				parentFrame.setJMenuBar(null);
+				parentFrame.revalidate();
 				cl_parentPanel.show(parentPanel, "mainMenuInterface");
 			}
 		});
@@ -175,6 +208,7 @@ public class RSAEncryptionInterface {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				try {
+				Seeder seeder = new Seeder();
 				seeder.Generate();
 				seeder.generatePublicKeyString();
 				seeder.generatePrivateKeyString();
@@ -282,6 +316,7 @@ public class RSAEncryptionInterface {
 		encryptBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
+					RSA rsa = new RSA();
 					rsa.readPublicKeyString(publicKey.getText());
 					String cipherText_ = rsa.encrypt(messageText.getText());
 					cipherText.setText(cipherText_);
@@ -386,6 +421,7 @@ public class RSAEncryptionInterface {
 		decryptBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
+					RSA rsa = new RSA();
 					rsa.readPrivateKeyString(privateKey.getText());
 					String originalMessage_ = rsa.decrypt(cipherText.getText());
 					originalMessage.setText(originalMessage_);
@@ -404,7 +440,7 @@ public class RSAEncryptionInterface {
 				privateKey.setText("");
 				cipherText.setText("");
 				originalMessage.setText("");
-						
+				
 				cl_simpleRSAPanel.show(simpleRSAPanel, "mainMenu");
 			}
 		});

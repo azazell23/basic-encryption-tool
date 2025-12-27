@@ -1,11 +1,6 @@
 package Authentication;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-
 import DAO.UserDAO;
-import Database.ConnectionDB;
 import Model.User;
 
 public class AuthLogin {

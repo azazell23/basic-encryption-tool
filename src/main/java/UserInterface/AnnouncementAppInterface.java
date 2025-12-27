@@ -4,7 +4,6 @@ import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
@@ -13,7 +12,6 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.nio.file.Path;
-import java.sql.Connection;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
@@ -32,12 +30,9 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
-import Cryptographers.RSA;
 import DAO.AnnouncementDAO;
-import Database.ConnectionDB;
 import Model.Announcement;
 import Model.User;
-import Seeders.Seeder;
 import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableModel;
 
@@ -51,25 +46,17 @@ public class AnnouncementAppInterface extends JFrame{
 	private static final long serialVersionUID = 1L;
 	private JPanel announcementAppPanel;
 	private CardLayout cl_announcementAppPanel;
-	private static RSA rsa;
-	private static Seeder seeder;
-	private CardLayout cl_parentPanel;
-	private JPanel parentPanel;
-	private JFrame parentFrame;
 	private JPanel testPanel; // testing purposes
 	private JTable table;
 	
-	// register textfields
-	private JTextField username;
-	private JPasswordField pass;
-	private JPasswordField conf_pass;
-	
-	// login textfields
-	private JTextField username_login;
-	private JPasswordField pass_login;
+	// panels
+	JPanel sendMessagePanel_;
+	JPanel announcementPanel_;
+	JPanel mainMenuPanel_;
+	JPanel registerMenuPanel_;
+	JPanel loginMenuPanel_;
 	
 	// data sections
-	private Connection db;
 	private User user;
 	ArrayList<Announcement> announcements;
 	// file purposes
@@ -94,22 +81,8 @@ public class AnnouncementAppInterface extends JFrame{
 	/**
 	 * Create the frame.
 	 */
-	public AnnouncementAppInterface(CardLayout cl_parentPanel, JPanel parentPanel, Seeder seeder, RSA rsa,
-			JFrame frame) {
-		// db connection
-		try {
-		db = new ConnectionDB().connect();
-		} catch (Exception err) {
-			System.out.println("Error: " + err.getMessage());
-			System.exit(102);
-		}
-
+	public AnnouncementAppInterface() {
 		
-		this.cl_parentPanel = cl_parentPanel;
-		this.parentPanel = parentPanel;
-		this.seeder = seeder;
-		this.rsa = rsa;
-		this.parentFrame = frame;
 	}
 	
 	public JPanel getMainPanel() {
@@ -123,85 +96,14 @@ public class AnnouncementAppInterface extends JFrame{
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 800, 600);
 		setContentPane(testPanel);
-		
-//		JPanel authMenuPanel = showAuthMenuPanel();
-		JPanel loginMenuPanel = showAuthLoginPanel();
-		JPanel registerMenuPanel = showAuthRegisterPanel();
-		
-		
-//		messagingAppPanel.add(authMenuPanel, "authMenuPanel"); // main panel
-		
-		announcementAppPanel.add(loginMenuPanel, "loginMenuPanel");
-		announcementAppPanel.add(registerMenuPanel, "registerMenuPanel"); // register panel
-		
+
+		loginMenuPanel_ = showAuthLoginPanel();
+		announcementAppPanel.add(loginMenuPanel_, "loginMenuPanel");
 		
 		return announcementAppPanel;
 	}
-
-//	public JPanel showAuthMenuPanel() {
-//		JPanel authMenu = new JPanel();
-//		authMenu.setLayout(new BorderLayout(0, 0));
-//		
-//		JPanel wrapper = new JPanel();
-//		authMenu.add(wrapper, BorderLayout.CENTER);
-//		wrapper.setLayout(new BorderLayout(0, 0));
-//		
-//		JPanel panel_1 = new JPanel();
-//		wrapper.add(panel_1, BorderLayout.CENTER);
-//		
-//		JPanel panel_3 = new JPanel();
-//		panel_1.add(panel_3);
-//		
-//		JButton registerBtn = new JButton("Register");
-//		panel_3.add(registerBtn);
-//		
-//		registerBtn.setPreferredSize(new Dimension(120, 40));
-//		
-//		JPanel divider = new JPanel();
-//		panel_3.add(divider);
-//		divider.setBorder(new EmptyBorder(0, 30, 0, 30));
-//		
-//		JButton loginBtn = new JButton("Log In");
-//		panel_3.add(loginBtn);
-//		loginBtn.setPreferredSize(new Dimension(120, 40));
-//		
-//		JPanel panel_2 = new JPanel();
-//		wrapper.add(panel_2, BorderLayout.NORTH);
-//		
-//		JPanel panel_4 = new JPanel();
-//		panel_4.setBorder(new EmptyBorder(80, 0, 0, 0));
-//		panel_2.add(panel_4);
-//		
-//		JLabel lblNewLabel_4 = new JLabel("Simple Messaging App");
-//		panel_4.add(lblNewLabel_4);
-//		lblNewLabel_4.setFont(new Font("Tahoma", Font.BOLD, 20));
-//		
-//		JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-//		authMenu.add(panel, BorderLayout.NORTH);
-//		
-//		JButton returnBtn = new JButton("Return");
-//		returnBtn.setPreferredSize(new Dimension(100, 40));
-//		panel.add(returnBtn);
-//		
-//		// action logics
-//				// login page redirect
-//				loginBtn.addActionListener(new ActionListener() {
-//					public void actionPerformed(ActionEvent e) {
-//						cl_messagingAppPanel.show(messagingAppPanel, "loginMenuPanel");
-//					}
-//				});
-//				
-//				// register page redirect
-//				registerBtn.addActionListener(new ActionListener() {
-//					public void actionPerformed(ActionEvent arg0) {
-//						cl_messagingAppPanel.show(messagingAppPanel, "registerMenuPanel");
-//					}
-//				});
-//		
-//		return authMenu;
-//	}
 	
-	public JPanel showAuthRegisterPanel() {
+	private JPanel showAuthRegisterPanel() {
 		JPanel registerMenu = new JPanel();
 		
 		JPanel panel = new JPanel();
@@ -251,7 +153,7 @@ public class AnnouncementAppInterface extends JFrame{
 		JLabel lblNewLabel_6 = new JLabel("Username:");
 		panel_4.add(lblNewLabel_6, BorderLayout.WEST);
 		
-		username = new JTextField();
+		JTextField username = new JTextField();
 		username.setBackground(new Color(235, 235, 235));
 		panel_4.add(username, BorderLayout.EAST);
 		username.setColumns(10);
@@ -270,7 +172,7 @@ public class AnnouncementAppInterface extends JFrame{
 		JLabel lblNewLabel_7 = new JLabel("Password:");
 		panel_5.add(lblNewLabel_7, BorderLayout.WEST);
 		
-		pass = new JPasswordField();
+		JPasswordField pass = new JPasswordField();
 		pass.setBackground(new Color(235, 235, 235));
 		panel_5.add(pass, BorderLayout.EAST);
 		pass.setColumns(10);
@@ -284,7 +186,7 @@ public class AnnouncementAppInterface extends JFrame{
 		JLabel lblNewLabel_10 = new JLabel("Confirm Password:");
 		panel_12.add(lblNewLabel_10, BorderLayout.WEST);
 		
-		conf_pass = new JPasswordField();
+		JPasswordField conf_pass = new JPasswordField();
 		conf_pass.setBackground(new Color(235, 235, 235));
 		panel_12.add(conf_pass, BorderLayout.EAST);
 		conf_pass.setColumns(10);
@@ -317,7 +219,17 @@ public class AnnouncementAppInterface extends JFrame{
 			
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
+				loginMenuPanel_ = showAuthLoginPanel();
+				announcementAppPanel.add(loginMenuPanel_, "loginMenuPanel");
 				cl_announcementAppPanel.show(announcementAppPanel, "loginMenuPanel");
+				
+				if (registerMenuPanel_ != null) {
+		            announcementAppPanel.remove(registerMenuPanel_);
+		            registerMenuPanel_ = null;
+		           
+		            announcementAppPanel.revalidate();
+		            announcementAppPanel.repaint();
+		        }
 			}
 		});
 		panel_10.add(btnNewButton);
@@ -328,8 +240,17 @@ public class AnnouncementAppInterface extends JFrame{
 				try {
 					user = AuthRegister.attempt(username.getText(), new String(pass.getPassword()).trim(), new String(conf_pass.getPassword()));
 					
-					addInnerContent();
+					mainMenuPanel_ = showMainMenuPanel();
+					announcementAppPanel.add(mainMenuPanel_, "mainMenuPanel");
 					cl_announcementAppPanel.show(announcementAppPanel, "mainMenuPanel");
+					
+					if (registerMenuPanel_ != null) {
+			            announcementAppPanel.remove(registerMenuPanel_);
+			            registerMenuPanel_ = null;
+			           
+			            announcementAppPanel.revalidate();
+			            announcementAppPanel.repaint();
+			        }
 				} catch (Exception err) {
 					JOptionPane.showMessageDialog(null, "Error: " + err.getMessage());
 				}
@@ -339,7 +260,7 @@ public class AnnouncementAppInterface extends JFrame{
 		return registerMenu;
 	}
 	
-	public JPanel showAuthLoginPanel() {
+	private JPanel showAuthLoginPanel() {
 		JPanel loginMenu = new JPanel();
 		
 		JPanel panel = new JPanel();
@@ -389,7 +310,7 @@ public class AnnouncementAppInterface extends JFrame{
 		JLabel lblNewLabel_6 = new JLabel("Username:");
 		panel_4.add(lblNewLabel_6, BorderLayout.WEST);
 		
-		username_login = new JTextField();
+		JTextField username_login = new JTextField();
 		username_login.setBackground(new Color(235, 235, 235));
 		panel_4.add(username_login, BorderLayout.EAST);
 		username_login.setColumns(10);
@@ -408,7 +329,7 @@ public class AnnouncementAppInterface extends JFrame{
 		JLabel lblNewLabel_7 = new JLabel("Password:");
 		panel_5.add(lblNewLabel_7, BorderLayout.WEST);
 		
-		pass_login = new JPasswordField();
+		JPasswordField pass_login = new JPasswordField();
 		pass_login.setBackground(new Color(235, 235, 235));
 		panel_5.add(pass_login, BorderLayout.EAST);
 		pass_login.setColumns(10);
@@ -441,7 +362,18 @@ public class AnnouncementAppInterface extends JFrame{
 		// action logics
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
+				registerMenuPanel_ = showAuthRegisterPanel();
+				announcementAppPanel.add(registerMenuPanel_, "registerMenuPanel");
 				cl_announcementAppPanel.show(announcementAppPanel, "registerMenuPanel");
+				
+		        
+		        if (loginMenuPanel_ != null) {
+		            announcementAppPanel.remove(loginMenuPanel_);
+		            loginMenuPanel_ = null;
+		           
+		            announcementAppPanel.revalidate();
+		            announcementAppPanel.repaint();
+		        }
 			}
 		});
 		panel_10.add(btnNewButton);
@@ -450,8 +382,17 @@ public class AnnouncementAppInterface extends JFrame{
 				try {
 					user = AuthLogin.attempt(username_login.getText(), new String(pass_login.getPassword()));
 					
-					addInnerContent();
+					mainMenuPanel_ = showMainMenuPanel();
+					announcementAppPanel.add(mainMenuPanel_, "mainMenuPanel");
 					cl_announcementAppPanel.show(announcementAppPanel, "mainMenuPanel");
+					
+					if (loginMenuPanel_ != null) {
+			            announcementAppPanel.remove(loginMenuPanel_);
+			            loginMenuPanel_ = null;
+			           
+			            announcementAppPanel.revalidate();
+			            announcementAppPanel.repaint();
+			        }
 				} catch (Exception err) {
 					JOptionPane.showMessageDialog(null, "Error: " + err.getMessage());
 				}
@@ -461,7 +402,7 @@ public class AnnouncementAppInterface extends JFrame{
 		return loginMenu;
 	}
 	
-	public JPanel showMainMenuPanel() {
+	private JPanel showMainMenuPanel() {
 		JPanel mainMenuPanel = new JPanel();
 		mainMenuPanel.setLayout(new BorderLayout(0, 0));
 		
@@ -489,6 +430,8 @@ public class AnnouncementAppInterface extends JFrame{
 			
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
+				sendMessagePanel_ = showSendMessagePanel();
+				announcementAppPanel.add(sendMessagePanel_, "sendAnnouncementPanel");
 				cl_announcementAppPanel.show(announcementAppPanel, "sendAnnouncementPanel");
 			}
 		});
@@ -499,8 +442,8 @@ public class AnnouncementAppInterface extends JFrame{
 		checkInboxBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				// show announcements panel
-				JPanel announcementPanel = showAnnouncementsPanel();
-				announcementAppPanel.add(announcementPanel, "announcementPanel");
+				announcementPanel_ = showAnnouncementsPanel();
+				announcementAppPanel.add(announcementPanel_, "announcementPanel");
 				cl_announcementAppPanel.show(announcementAppPanel, "announcementPanel");
 			}
 		});
@@ -511,13 +454,30 @@ public class AnnouncementAppInterface extends JFrame{
 		mainMenuPanel.add(panel, BorderLayout.NORTH);
 		
 		JButton logoutBtn = new JButton("Log Out");
+		logoutBtn.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+		        cl_announcementAppPanel.show(announcementAppPanel, "loginMenuPanel");
+		        
+		        if (mainMenuPanel_ != null) {
+		            announcementAppPanel.remove(mainMenuPanel_);
+		            mainMenuPanel_ = null;
+		            // 3. Refresh UI
+		            announcementAppPanel.revalidate();
+		            announcementAppPanel.repaint();
+		        }
+		        
+		        user = null;
+			}
+		});
 		logoutBtn.setPreferredSize(new Dimension(100, 40));
 		panel.add(logoutBtn);
 
 		return mainMenuPanel;
 	}
 	
-	public JPanel showSendMessagePanel() {
+	private JPanel showSendMessagePanel() {
 		JPanel sendMessagePanel = new JPanel();
 		sendMessagePanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		
@@ -541,6 +501,23 @@ public class AnnouncementAppInterface extends JFrame{
 		panel.add(panel_7);
 		
 		JButton btnNewButton_1 = new JButton("Return");
+		btnNewButton_1.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// 1. Go back to main menu
+		        cl_announcementAppPanel.show(announcementAppPanel, "mainMenuPanel");
+		        
+		        // 2. Remove this panel to save memory and ensure reset next time
+		        if (sendMessagePanel_ != null) {
+		            announcementAppPanel.remove(sendMessagePanel_);
+		            sendMessagePanel_ = null;
+		            // 3. Refresh UI
+		            announcementAppPanel.revalidate();
+		            announcementAppPanel.repaint();
+		        }
+			}
+		});
 		panel_7.add(btnNewButton_1);
 		
 		JPanel panel_1 = new JPanel();
@@ -658,7 +635,7 @@ public class AnnouncementAppInterface extends JFrame{
 		return sendMessagePanel;				
 	}
 
-	public JPanel showAnnouncementsPanel() {
+	private JPanel showAnnouncementsPanel() {
 		JPanel announcementPanel = new JPanel();
 		announcementPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		
@@ -717,25 +694,61 @@ public class AnnouncementAppInterface extends JFrame{
 		panel_3.add(lblNewLabel);
 		
 		JButton btnNewButton_1 = new JButton("View");
+		btnNewButton_1.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				int selectedRow = table.getSelectedRow();
+				if (selectedRow == -1) {
+					JOptionPane.showMessageDialog(null, "Please select an announcement first.");
+					return;
+				}
+				AnnouncementDialog dialog = new AnnouncementDialog(AnnouncementAppInterface.this, announcements.get(selectedRow));
+				dialog.setVisible(true);
+			}
+		});
 		panel_3.add(btnNewButton_1);
 		
 		JPanel panel_7 = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		panel_1.add(panel_7);
 		
 		JLabel lblNewLabel_2 = new JLabel("Download File");
+		
 		panel_7.add(lblNewLabel_2);
 		
 		JButton btnNewButton_2 = new JButton("Download");
+		btnNewButton_2.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				int selectedRow = table.getSelectedRow();
+				
+				if (selectedRow == -1) {
+					JOptionPane.showMessageDialog(null, "Please select an announcement first.");
+					return;
+				}
+				else if (announcements.get(selectedRow).getDecryptedFile() == null) {
+					JOptionPane.showMessageDialog(null, "Announcement doesn't have attached file.");
+					return;
+				}
+				try {
+					announcements.get(selectedRow).getDecryptedFile().downloadFile();
+					JOptionPane.showMessageDialog(null, "File successfully downloaded.");
+				} catch (Exception err) {
+					JOptionPane.showMessageDialog(null, "Error: Failed to download file.");
+				}
+			}
+		});
 		panel_7.add(btnNewButton_2);
 		
 		JPanel panel_8 = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		panel_1.add(panel_8);
 		
-		JLabel lblNewLabel_3 = new JLabel("Delete Announcement");
-		panel_8.add(lblNewLabel_3);
-		
-		JButton btnNewButton_3 = new JButton("Delete");
-		panel_8.add(btnNewButton_3);
+//		JLabel lblNewLabel_3 = new JLabel("Delete Announcement");
+//		panel_8.add(lblNewLabel_3);
+//		
+//		JButton btnNewButton_3 = new JButton("Delete");
+//		panel_8.add(btnNewButton_3);
 		
 		JPanel panel_4 = new JPanel();
 		panel.add(panel_4, BorderLayout.NORTH);
@@ -745,6 +758,22 @@ public class AnnouncementAppInterface extends JFrame{
 		panel_4.add(panel_5);
 		
 		JButton btnNewButton = new JButton("Return");
+		btnNewButton.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				cl_announcementAppPanel.show(announcementAppPanel, "mainMenuPanel");
+		        
+		        // 2. Remove this panel
+		        if (announcementPanel_ != null) {
+		            announcementAppPanel.remove(announcementPanel_);
+		            announcementPanel_ = null;
+		            // 3. Refresh UI
+		            announcementAppPanel.revalidate();
+		            announcementAppPanel.repaint();
+		        }
+			}
+		});
 		panel_5.add(btnNewButton);
 		
 		JPanel panel_6 = new JPanel();
@@ -755,19 +784,8 @@ public class AnnouncementAppInterface extends JFrame{
 		
 		return announcementPanel;
 	}
-	
-	public void addInnerContent() {
-		// main menu panel
-		JPanel mainMenuPanel = showMainMenuPanel();
-		announcementAppPanel.add(mainMenuPanel, "mainMenuPanel"); // main menu panel
-		
-		// send message panel
-		JPanel sendMessagePanel = showSendMessagePanel();
-		announcementAppPanel.add(sendMessagePanel, "sendAnnouncementPanel");
-		
-	}
 
-	public void updateTable(Date date) {
+	private void updateTable(Date date) {
 		try {
 			DefaultTableModel model = (DefaultTableModel) table.getModel();
 			model.setRowCount(0);
@@ -786,7 +804,7 @@ public class AnnouncementAppInterface extends JFrame{
 				index++;
 			}
 		} catch (Exception err) {
-			JOptionPane.showMessageDialog(null, "Error: Fail to update table." + err);
+			JOptionPane.showMessageDialog(null, "Error: Failed to update table." + err);
 		}
 	}
 
