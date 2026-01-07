@@ -238,7 +238,15 @@ public class AnnouncementAppInterface extends JFrame{
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				try {
-					user = AuthRegister.attempt(username.getText(), new String(pass.getPassword()).trim(), new String(conf_pass.getPassword()));
+					String username__ = username.getText();
+					String password__ = new String(pass.getPassword());
+					String conf_password__ = new String(conf_pass.getPassword());
+					if (username__.isEmpty() || password__.isEmpty() || conf_password__.isEmpty()) {
+						JOptionPane.showMessageDialog(null, "Error: Please fill in all the fields.");
+						return;
+					}
+					
+					user = AuthRegister.attempt(username__, password__, conf_password__);
 					
 					mainMenuPanel_ = showMainMenuPanel();
 					announcementAppPanel.add(mainMenuPanel_, "mainMenuPanel");
@@ -380,7 +388,13 @@ public class AnnouncementAppInterface extends JFrame{
 		btnNewButton_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				try {
-					user = AuthLogin.attempt(username_login.getText(), new String(pass_login.getPassword()));
+					String username = username_login.getText();
+					String password = new String(pass_login.getPassword());
+					if (username.isEmpty() || password.isEmpty()) {
+						JOptionPane.showMessageDialog(null, "Error: Please fill in all the fields.");
+						return;
+					}
+					user = AuthLogin.attempt(username, password);
 					
 					mainMenuPanel_ = showMainMenuPanel();
 					announcementAppPanel.add(mainMenuPanel_, "mainMenuPanel");
