@@ -208,16 +208,16 @@ public class RSAEncryptionInterface {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				try {
-				Seeder seeder = new Seeder();
-				seeder.Generate();
-				seeder.generatePublicKeyString();
-				seeder.generatePrivateKeyString();
-				JOptionPane.showMessageDialog(mainMenu, "Key successfully generated. Check the menubar to copy the keys.");
-				
-			} catch (Exception seederErr) {
-				System.out.println(seederErr);
-			};
-		}});
+					seeder = new Seeder();
+					seeder.Generate();
+					seeder.generatePublicKeyString();
+					seeder.generatePrivateKeyString();
+					JOptionPane.showMessageDialog(mainMenu, "Key successfully generated. Check the menubar to copy the keys.");
+				} catch (Exception seederErr) {
+					System.out.println(seederErr);
+				};
+			}
+		});
 		
 		// encryption page redirect
 		encryptBtn.addActionListener(new ActionListener() {

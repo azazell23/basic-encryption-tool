@@ -435,7 +435,7 @@ public class AnnouncementAppInterface extends JFrame{
 				cl_announcementAppPanel.show(announcementAppPanel, "sendAnnouncementPanel");
 			}
 		});
-		sendMsgBtn.setPreferredSize(new Dimension(120, 40));
+		sendMsgBtn.setPreferredSize(new Dimension(180, 40));
 		panel_3.add(sendMsgBtn);
 		
 		JButton checkInboxBtn = new JButton("Check Announcements");
@@ -447,7 +447,7 @@ public class AnnouncementAppInterface extends JFrame{
 				cl_announcementAppPanel.show(announcementAppPanel, "announcementPanel");
 			}
 		});
-		checkInboxBtn.setPreferredSize(new Dimension(120, 40));
+		checkInboxBtn.setPreferredSize(new Dimension(180, 40));
 		panel_3.add(checkInboxBtn);
 		
 		JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -458,17 +458,19 @@ public class AnnouncementAppInterface extends JFrame{
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				user = null;
+		        announcements = null;
+		        filePath = null;
+
+		        announcementAppPanel.removeAll();
+
+		        loginMenuPanel_ = showAuthLoginPanel();
+		        announcementAppPanel.add(loginMenuPanel_, "loginMenuPanel");
+
 		        cl_announcementAppPanel.show(announcementAppPanel, "loginMenuPanel");
-		        
-		        if (mainMenuPanel_ != null) {
-		            announcementAppPanel.remove(mainMenuPanel_);
-		            mainMenuPanel_ = null;
-		            // 3. Refresh UI
-		            announcementAppPanel.revalidate();
-		            announcementAppPanel.repaint();
-		        }
-		        
-		        user = null;
+
+		        announcementAppPanel.revalidate();
+		        announcementAppPanel.repaint();
 			}
 		});
 		logoutBtn.setPreferredSize(new Dimension(100, 40));
