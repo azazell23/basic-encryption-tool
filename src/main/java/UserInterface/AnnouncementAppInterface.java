@@ -627,13 +627,19 @@ public class AnnouncementAppInterface extends JFrame{
 			public void actionPerformed(ActionEvent e) {
 				String subject = textField_1.getText();
 				String message = textArea.getText();
-				String filepathView = filePath.toString();
+				String filepathView = (filePath != null) ? filePath.toString() : "";
 				
-				if (subject.equals(null) && filepathView.equals(null)) {
-					JOptionPane.showMessageDialog(null, "Atleast one of the content must be filled.");
+				if (subject.isEmpty() && filepathView.isEmpty()) {
+					JOptionPane.showMessageDialog(null, "Atleast message and title or a file must be filled.");
+					return;
 				}
-				else if (!message.equals(null) && subject.equals(null)) {
+				else if (message.isEmpty() && !subject.isEmpty()) {
+					JOptionPane.showMessageDialog(null, "Enter the message of the subject.");
+					return;
+				}
+				else if (!message.isEmpty() && subject.isEmpty()) {
 					JOptionPane.showMessageDialog(null, "Enter the subject of the message.");
+					return;
 				}
 				else {
 					Timestamp sentAt = new Timestamp(new Date().getTime());
