@@ -629,7 +629,7 @@ public class AnnouncementAppInterface extends JFrame{
 				String message = textArea.getText();
 				String filepathView = (filePath != null) ? filePath.toString() : "";
 				
-				if (subject.isEmpty() && filepathView.isEmpty()) {
+				if (subject.isEmpty() && message.isEmpty() && filepathView.isEmpty()) {
 					JOptionPane.showMessageDialog(null, "Atleast message and title or a file must be filled.");
 					return;
 				}

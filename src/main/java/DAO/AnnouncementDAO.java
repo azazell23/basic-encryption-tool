@@ -26,7 +26,9 @@ public class AnnouncementDAO {
 			
 			String encryptedSubj = rsa.encrypt(announcement.getTitle());
 			String encryptedMessage = rsa.encrypt(announcement.getMessage());
-			String encryptedFilePath = rsa.encrypt(rsa.encrypt(announcement.getFilepath().toAbsolutePath()).toString());
+			String encryptedFilePath = (announcement.getFilepath() != null) ? 
+					rsa.encrypt(rsa.encrypt(announcement.getFilepath().toAbsolutePath()).toString()) :
+					null;
 			
 			// insertion section
 			String query = "INSERT INTO announcements "
