@@ -81,7 +81,14 @@ public class AnnouncementDAO {
 				
 				String title = rsa.decrypt(rs.getString("announcement_title"));
 				String message = rsa.decrypt(rs.getString("announcement_message"));
-				DecryptedFile file = rsa.decrypt(Paths.get(rsa.decrypt(rs.getString("filepath"))));
+
+				DecryptedFile file = null;
+
+				String encryptedPath = rs.getString("filepath");
+				if (encryptedPath != null && !encryptedPath.isEmpty()) {
+				    String decryptedPath = rsa.decrypt(encryptedPath);
+				    file = rsa.decrypt(Paths.get(decryptedPath));
+				}
 				
 				SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
 				String sentAtStr = sdf.format(rs.getTimestamp("sent_at"));

@@ -32,6 +32,7 @@ import javax.swing.border.EmptyBorder;
 
 import DAO.AnnouncementDAO;
 import Model.Announcement;
+import Model.DecryptedFile;
 import Model.User;
 import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableModel;
@@ -814,11 +815,12 @@ public class AnnouncementAppInterface extends JFrame{
 			announcements = new AnnouncementDAO().searchByDate(date);
 			int index = 1;
 			for (Announcement ann : announcements) {
+				DecryptedFile file = ann.getDecryptedFile();
 				Object[] data = {
 						index,
 						ann.getAuthor().getUsername(),
 						ann.getTitle(),
-						ann.getDecryptedFile().getFileName(),
+						(file != null) ? file.getFileName() : "",
 						ann.getSentAtStr()
 				};
 				
@@ -826,6 +828,7 @@ public class AnnouncementAppInterface extends JFrame{
 				index++;
 			}
 		} catch (Exception err) {
+			err.printStackTrace();
 			JOptionPane.showMessageDialog(null, "Error: Failed to update table." + err);
 		}
 	}
