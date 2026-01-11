@@ -517,7 +517,7 @@ public class AnnouncementAppInterface extends JFrame{
 		panel_7.setBackground(new Color(255, 255, 255));
 		panel.add(panel_7);
 		
-		JButton btnNewButton_1 = new JButton("Return");
+		JButton btnNewButton_1 = new JButton("Back");
 		btnNewButton_1.addActionListener(new ActionListener() {
 			
 			@Override
@@ -780,7 +780,7 @@ public class AnnouncementAppInterface extends JFrame{
 		JPanel panel_5 = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		panel_4.add(panel_5);
 		
-		JButton btnNewButton = new JButton("Return");
+		JButton btnNewButton = new JButton("Back");
 		btnNewButton.addActionListener(new ActionListener() {
 			
 			@Override

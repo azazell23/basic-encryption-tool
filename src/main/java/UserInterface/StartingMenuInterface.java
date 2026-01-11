@@ -62,7 +62,7 @@ public class StartingMenuInterface extends JFrame {
 		mainMenuPanel.add(wrapper);
 		wrapper.setLayout(new BorderLayout(0, 0));
 		
-		JButton announcementAppButton = new JButton("Simple Messaging App");
+		JButton announcementAppButton = new JButton("Simple Announcement App");
 		
 		wrapper.add(announcementAppButton, BorderLayout.WEST);
 		announcementAppButton.setPreferredSize(new Dimension(180, 40));

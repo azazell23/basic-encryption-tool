@@ -1,10 +1,7 @@
 package Authentication;
 
-import java.sql.Connection;
-
 import DAO.CryptoKeyDAO;
 import DAO.UserDAO;
-import Database.ConnectionDB;
 import Model.User;
 
 public class AuthRegister {
@@ -12,7 +9,7 @@ public class AuthRegister {
 		if (!password.equals(password_conf)) {
 			throw new Exception("Password doesn't match.");
 		}
-		try (Connection db = new ConnectionDB().connect()) {
+		try {
 			User user = new UserDAO().searchByUsername(username);
 			
 			if (user != null) {

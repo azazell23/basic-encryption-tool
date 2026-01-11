@@ -140,7 +140,7 @@ public class RSAEncryptionInterface {
 		panel.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 10));
 		menuPanel_header.add(panel, BorderLayout.NORTH);
 		
-		JButton returnBtn = new JButton("Return");
+		JButton returnBtn = new JButton("Back");
 		
 		returnBtn.setPreferredSize(new Dimension(100, 40));
 		panel.add(returnBtn);
@@ -249,7 +249,7 @@ public class RSAEncryptionInterface {
 		JPanel panel_5 = new JPanel();
 		panel_6.add(panel_5, BorderLayout.NORTH);
 		
-		JButton btnNewButton = new JButton("Return");
+		JButton btnNewButton = new JButton("Back");
 		
 		btnNewButton.setPreferredSize(new Dimension(100, 40));
 		
@@ -356,7 +356,7 @@ public class RSAEncryptionInterface {
 		JPanel panel_5 = new JPanel();
 		panel_6.add(panel_5, BorderLayout.NORTH);
 		
-		JButton btnNewButton = new JButton("Return");
+		JButton btnNewButton = new JButton("Back");
 		btnNewButton.setPreferredSize(new Dimension(100, 40));
 		
 		
